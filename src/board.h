@@ -4,10 +4,12 @@
 
 typedef struct {
     int strength;
+    bool isPlayerOne;
 } Pieces;
 
 Pieces*** createBoard(int rows, int columns);
 void freeBoard(Pieces ***board, int rows, int columns);
+void printBoard(Pieces ***board, int rows, int columns);
 
 #ifndef POINTEDSTRATEGO_BOARD_H
 #define POINTEDSTRATEGO_BOARD_H
