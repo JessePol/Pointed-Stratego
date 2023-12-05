@@ -6,15 +6,15 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-Pieces*** createBoard(int rows, int columns) {
-    Pieces ***board = (Pieces***)malloc(rows * sizeof(Pieces***));
+Piece*** createBoard(int rows, int columns) {
+    Piece ***board = (Piece***)malloc(rows * sizeof(Piece***));
 
     if (board == NULL) {
         return NULL;
     }
 
     for (int i = 0; i < rows; i++) {
-        board[i] = (Pieces**)malloc(columns * sizeof(Pieces*));
+        board[i] = (Piece**)malloc(columns * sizeof(Piece*));
 
         if (board[i] == NULL) {
             // Free previously allocated rows in case of failure
@@ -29,7 +29,7 @@ Pieces*** createBoard(int rows, int columns) {
     return board;
 }
 
-void freeBoard(Pieces ***board, int rows, int columns) {
+void freeBoard(Piece ***board, int rows, int columns) {
     if (board != NULL) {
         // Free
         for (int i = 0; i < rows; i++) {
@@ -46,7 +46,7 @@ void freeBoard(Pieces ***board, int rows, int columns) {
     }
 }
 
-void printBoard(Pieces ***board, int rows, int columns) {
+void printBoard(Piece ***board, int rows, int columns) {
     // Printing column headers (1, 2, 3, ...)
     printf("   ");
     for (int col = 0; col < columns; col++) {
@@ -56,7 +56,7 @@ void printBoard(Pieces ***board, int rows, int columns) {
 
     for (int i = 0; i < rows; i++) {
         // Printing row headers (A, B, C, ...)
-        printf("%c  ", 'A' + i);
+        printf("%2d ", i);
 
         for (int j = 0; j < columns; j++) {
             if (board[i][j] != NULL) {
@@ -69,4 +69,21 @@ void printBoard(Pieces ***board, int rows, int columns) {
         }
         printf("\n");
     }
+}
+
+Piece*** initializeBoard(int rows, int columns){
+    Piece ***board = createBoard(rows, columns);
+    Piece* newPiece = createPiece(true, 6);
+    board[3][2] = newPiece;
+
+    Piece* enemyStrongerPiece = createPiece(false, 5);
+    board[1][1] = enemyStrongerPiece;
+
+    Piece* enemySamePiece = createPiece(false, 6);
+    board[1][2] = enemySamePiece;
+
+    Piece* enemyWeakerPiece = createPiece(false, 7);
+    board[1][3] = enemyWeakerPiece;
+
+    return board;
 }
