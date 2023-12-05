@@ -61,7 +61,12 @@ void printBoard(Piece ***board, int rows, int columns) {
         for (int j = 0; j < columns; j++) {
             if (board[i][j] != NULL) {
                 // Print the strength of the piece
-                printf("%2d ", board[i][j]->strength);
+                if(board[i][j]->isPlayerOne) {
+                    printf("%2d ", board[i][j]->strength);
+                }
+                else {
+                    printf(" ? ");
+                }
             } else {
                 // Print 'X' if the cell is empty
                 printf(" X ");

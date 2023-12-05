@@ -19,14 +19,14 @@ bool turn(Piece*** board, bool isPlayerOne){
     originalMove.xCoordinate = xCoordinate;
     originalMove.yCoordinate = yCoordinate;
 
-    Piece* selected_piece = board[originalMove.xCoordinate][originalMove.yCoordinate];
+    Piece* selectedPiece = board[originalMove.xCoordinate][originalMove.yCoordinate];
 
-    if (selected_piece == NULL){
+    if (selectedPiece == NULL){
         printf("You selected an empty field.");
         return false;
     }
 
-    if (selected_piece->isPlayerOne != isPlayerOne){
+    if (selectedPiece->isPlayerOne != isPlayerOne){
         printf("You selected an enemy piece.");
         return false;
     }
@@ -59,8 +59,33 @@ bool turn(Piece*** board, bool isPlayerOne){
     newMove.xCoordinate = xCoordinate;
     newMove.yCoordinate = yCoordinate;
 
-    board[newMove.xCoordinate][newMove.yCoordinate] = selected_piece;
-    board[originalMove.xCoordinate][originalMove.yCoordinate] = NULL;
+    Piece* possiblePiece = board[newMove.xCoordinate][newMove.yCoordinate];
+
+    if (possiblePiece !=NULL){
+        if(selectedPiece->strength>possiblePiece->strength){
+            freePiece(possiblePiece);
+            printf("Your piece won from the enemy piece.\n");
+            board[originalMove.xCoordinate][originalMove.yCoordinate] = NULL;
+            board[newMove.xCoordinate][newMove.yCoordinate] = selectedPiece;
+        }
+        if(selectedPiece->strength<possiblePiece->strength){
+            freePiece(selectedPiece);
+            printf("Your piece lost against the enemy piece.\n");
+            board[originalMove.xCoordinate][originalMove.yCoordinate] = NULL;
+        }
+        if(selectedPiece->strength==possiblePiece->strength){
+            freePiece(selectedPiece);
+            freePiece(possiblePiece);
+            printf("Your piece was even with the enemy piece.\n");
+            board[originalMove.xCoordinate][originalMove.yCoordinate] = NULL;
+            board[newMove.xCoordinate][newMove.yCoordinate] = NULL;
+
+        }
+    }
+    else{
+        board[newMove.xCoordinate][newMove.yCoordinate] = selectedPiece;
+        board[originalMove.xCoordinate][originalMove.yCoordinate] = NULL;
+    }
 
     return true;
 }
@@ -69,13 +94,16 @@ int main() {
 
     int rows = 5;
     int columns = 5;
+    bool continueGame = true;
 
     Piece ***board = initializeBoard(rows, columns);
 
     printBoard(board, rows, columns);
 
-    turn(board, true);
-    printBoard(board, rows, columns);
+    while(continueGame){
+        turn(board, true);
+        printBoard(board, rows, columns);
+    }
 
     freeBoard(board, rows, columns);
     return 0;
