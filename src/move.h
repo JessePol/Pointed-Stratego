@@ -7,6 +7,10 @@ typedef struct {
     int yCoordinate;
 } Move;
 
+Move* createMove(int xCoordinate, int yCoordinate);
+Move* createNewMove();
+Move* askDirectionMove(Move* move);
+
 #ifndef POINTEDSTRATEGO_MOVE_H
 #define POINTEDSTRATEGO_MOVE_H
 
