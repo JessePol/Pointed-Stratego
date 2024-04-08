@@ -1,90 +1,43 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <ctype.h>
-
 #include "src/board.h"
-#include "src/move.h"
 
 bool turn(Piece*** board, bool isPlayerOne){
-    int xCoordinate;
-    int yCoordinate;
+    Move* newMove = createNewMove();
 
-    printf("Enter the X coordinate: ");
-    scanf("%d", &xCoordinate);
+    Piece* selectedPiece = selectPiece(board, newMove, isPlayerOne);
 
-    printf("Enter the Y coordinate: ");
-    scanf("%d", &yCoordinate);
-
-    Move originalMove;
-    originalMove.xCoordinate = xCoordinate;
-    originalMove.yCoordinate = yCoordinate;
-
-    Piece* selectedPiece = board[originalMove.xCoordinate][originalMove.yCoordinate];
-
-    if (selectedPiece == NULL){
-        printf("You selected an empty field.");
+    if(selectedPiece == NULL) {
         return false;
     }
 
-    if (selectedPiece->isPlayerOne != isPlayerOne){
-        printf("You selected an enemy piece.");
-        return false;
-    }
+    Move* pieceMove = askDirectionMove(newMove);
 
-    char direction;
-
-    printf("Enter a direction the first letter of (Right/Left/Up/Down): ");
-    scanf(" %c", &direction);
-
-    direction = toupper(direction);
-
-    switch (direction) {
-        case 'R':
-            xCoordinate += 1;
-            break;
-        case 'L':
-            xCoordinate -= 1;
-            break;
-        case 'U':
-            yCoordinate += 1;
-            break;
-        case 'D':
-            yCoordinate -= 1;
-            break;
-        default:
-            printf("Invalid direction entered.\n");
-    }
-
-    Move newMove;
-    newMove.xCoordinate = xCoordinate;
-    newMove.yCoordinate = yCoordinate;
-
-    Piece* possiblePiece = board[newMove.xCoordinate][newMove.yCoordinate];
+    Piece* possiblePiece = board[pieceMove->yCoordinate][pieceMove->xCoordinate];
 
     if (possiblePiece !=NULL){
         if(selectedPiece->strength>possiblePiece->strength){
             freePiece(possiblePiece);
             printf("Your piece won from the enemy piece.\n");
-            board[originalMove.xCoordinate][originalMove.yCoordinate] = NULL;
-            board[newMove.xCoordinate][newMove.yCoordinate] = selectedPiece;
+            board[newMove->yCoordinate][newMove->xCoordinate] = NULL;
+            board[pieceMove->yCoordinate][pieceMove->xCoordinate] = selectedPiece;
         }
         if(selectedPiece->strength<possiblePiece->strength){
             freePiece(selectedPiece);
             printf("Your piece lost against the enemy piece.\n");
-            board[originalMove.xCoordinate][originalMove.yCoordinate] = NULL;
+            board[newMove->yCoordinate][newMove->xCoordinate] = NULL;
         }
         if(selectedPiece->strength==possiblePiece->strength){
             freePiece(selectedPiece);
             freePiece(possiblePiece);
             printf("Your piece was even with the enemy piece.\n");
-            board[originalMove.xCoordinate][originalMove.yCoordinate] = NULL;
-            board[newMove.xCoordinate][newMove.yCoordinate] = NULL;
+            board[newMove->yCoordinate][newMove->xCoordinate] = NULL;
+            board[pieceMove->yCoordinate][pieceMove->xCoordinate] = NULL;
 
         }
     }
     else{
-        board[newMove.xCoordinate][newMove.yCoordinate] = selectedPiece;
-        board[originalMove.xCoordinate][originalMove.yCoordinate] = NULL;
+        board[pieceMove->yCoordinate][pieceMove->xCoordinate] = selectedPiece;
+        board[newMove->yCoordinate][newMove->xCoordinate] = NULL;
     }
 
     return true;
